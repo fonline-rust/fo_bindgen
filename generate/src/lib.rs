@@ -21,7 +21,7 @@ impl Generator {
         server: bool,
         types: &[&str],
         opaque: &[&str],
-        blacklist: &[&str],
+        blocklist: &[&str],
         prefix: &str,
         file: &str,
     ) {
@@ -29,7 +29,7 @@ impl Generator {
             .clang_args(&self.args)
             .header(&self.input)
             .raw_line("#[allow(unused_imports)] use super::*;\n")
-            .whitelist_recursively(false)
+            .allowlist_recursively(false)
             .with_codegen_config(CodegenConfig::TYPES);
 
         if server {
@@ -39,13 +39,13 @@ impl Generator {
         }
 
         for ty in types {
-            builder = builder.whitelist_type(ty);
+            builder = builder.allowlist_type(ty);
         }
         for ty in opaque {
             builder = builder.opaque_type(ty);
         }
-        for ty in blacklist {
-            builder = builder.blacklist_type(ty);
+        for ty in blocklist {
+            builder = builder.blocklist_type(ty);
         }
         let bindings = builder.generate().unwrap();
         bindings
