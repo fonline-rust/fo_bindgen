@@ -164,6 +164,7 @@ impl Generator {
             &[
                 "ScriptString",
                 "ScriptArray",
+                "CScriptArray",
                 "asIObjectType",
                 "ArrayBuffer",
                 "asDWORD",
