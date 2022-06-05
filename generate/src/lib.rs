@@ -1,27 +1,28 @@
 use bindgen::{builder, CodegenConfig};
-use serde::{Deserialize};
+use serde::Deserialize;
 
 #[derive(Deserialize)]
 pub struct Generator {
     pub args: Vec<String>,
     pub input: String,
     pub output: String,
+    pub as_types: Vec<String>,
 }
 
 impl Generator {
-    fn generate(&self, server: bool, types: &[&str], prefix: &str, file: &str, opaque: bool) {
+    fn generate(&self, server: bool, types: &[impl AsRef<str>], prefix: &str, file: &str, opaque: bool) {
         if opaque {
-            self.generate_custom(server, types, types, &[], prefix, file);
+            self.generate_custom(server, types, types, EMPTY, prefix, file);
         } else {
-            self.generate_custom(server, types, &[], &[], prefix, file);
+            self.generate_custom(server, types, EMPTY, EMPTY, prefix, file);
         }
     }
     fn generate_custom(
         &self,
         server: bool,
-        types: &[&str],
-        opaque: &[&str],
-        blocklist: &[&str],
+        types: &[impl AsRef<str>],
+        opaque: &[impl AsRef<str>],
+        blocklist: &[impl AsRef<str>],
         prefix: &str,
         file: &str,
     ) {
@@ -80,7 +81,7 @@ impl Generator {
                     "GlobalMapGroup",
                 ][..]
             },
-            &[],
+            EMPTY,
             prefix,
             "critter.rs",
         );
@@ -125,7 +126,7 @@ impl Generator {
             self.generate_custom(
                 server,
                 &["Field", "Field_Tile"],
-                &[],
+                EMPTY,
                 &["Field_TileVec"],
                 prefix,
                 "field.rs",
@@ -161,18 +162,12 @@ impl Generator {
         self.generate(true, &number_types, "", "num.rs", false);
         self.generate(
             true,
-            &[
-                "ScriptString",
-                "ScriptArray",
-                "CScriptArray",
-                "asIObjectType",
-                "ArrayBuffer",
-                "asDWORD",
-                "asBYTE",
-            ],
+            &self.as_types,
             "",
             "angelscript.rs",
             false,
         );
     }
 }
+
+const EMPTY: &'static [&'static str] = &[];
