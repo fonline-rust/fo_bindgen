@@ -1,0 +1,13 @@
+[package]
+name = "fo_bindgen_engine"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[features]
+default = ["cp1251"]
+cp1251 = ["encoding_rs"]
+
+[dependencies]
+encoding_rs = { version = "0.8", optional = true}
